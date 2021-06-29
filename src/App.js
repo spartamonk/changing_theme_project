@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react'
+import React, { useReducer, useEffect } from 'react'
 import data from './data'
 import Article from './Article'
+import {reducer} from './reducer'
 
 const getLocalStorage =()=> {
   let theme = 'light-theme';
@@ -9,20 +10,23 @@ const getLocalStorage =()=> {
   }
   return theme
 }
-
+const initialState = {
+  theme: getLocalStorage()
+}
 function App() {
-  const [theme, setTheme] = useState(getLocalStorage())
 
+  const [state, dispatch] = useReducer(reducer, initialState)
+  
   useEffect(()=> {
-    document.documentElement.className = theme;
-    localStorage.setItem('theme',theme)
-  },[theme])
+    document.documentElement.className = state.theme;
+    localStorage.setItem('theme',state.theme)
+  },[state.theme])
 
   const handleToggle =()=> {
-    if(theme === 'light-theme') {
-      setTheme('dark-theme')
+    if(state.theme === 'light-theme') {
+      dispatch({type: 'DARK_MODE', payload: 'dark-theme'})
     } else {
-      setTheme('light-theme')
+      dispatch({type: 'LIGHT_MODE', payload: 'light-theme'})
     }
   }
 
